@@ -245,11 +245,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2674faaa05a0a3b41b61dbe25f997ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallCountSetting: 15
-  wallScaleSetting: {x: 1, y: 5, z: 1}
-  wallTopWidthSetting: 0.3
-  directionSetting: {x: 0, y: 0, z: 1}
-  material: {fileID: 2100000, guid: e05e86b2045ba5642b65ff95cdf39b9f, type: 2}
+  _material: {fileID: 2100000, guid: e05e86b2045ba5642b65ff95cdf39b9f, type: 2}
+  _parent: {fileID: 1645409812}
+  _wallScale: {x: 2, y: 5, z: 5}
+  _wallTopWidth: 0
+  _seed: 31
 --- !u!4 &1645409812
 Transform:
   m_ObjectHideFlags: 0
@@ -340,10 +340,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981900316}
-  m_LocalRotation: {x: 0.16646999, y: -0.12353072, z: 0.021025628, w: 0.9780521}
-  m_LocalPosition: {x: 3.4, y: 5.65, z: -0.53}
+  m_LocalRotation: {x: -0.25979605, y: 0.6398725, z: -0.25870374, w: -0.67538255}
+  m_LocalPosition: {x: 242.2, y: 125.1, z: 68.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 19.319, y: -14.397, z: 0}
+  m_LocalEulerAnglesHint: {x: 43, y: 273.617, z: 1.33}
