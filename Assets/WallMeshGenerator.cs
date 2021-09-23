@@ -5,13 +5,13 @@ using UnityEngine;
 public class WallMeshGenerator : MonoBehaviour
 {
 	private static int _wallCountName;
-	public static void SpawnWalls(Material material, Transform parent, Vector3 pos, Vector3 direction, Vector3 wallScale, float wallTopWidth)
+	public static Bounds SpawnWalls(Material material, Transform parent, Vector3 pos, Vector3 direction, Vector3 wallScale, float wallTopWidth)
     {
 	    
-	    SpawnWall(material, parent, direction, pos, wallScale, wallTopWidth, GetCombinedWall( direction, parent, wallScale, wallTopWidth));
+	    return SpawnWall(material, parent, direction, pos, wallScale, wallTopWidth, GetCombinedWall( direction, parent, wallScale, wallTopWidth));
 	    
     }
-    private static Mesh GenerateWallMesh(Vector3 wallScaleSetting, float wallTopWidthSetting)
+    public static Mesh GenerateWallMesh(Vector3 wallScaleSetting, float wallTopWidthSetting)
     {
 	    Mesh mesh = new Mesh();
         //Create a 'Cube' mesh...
@@ -19,7 +19,7 @@ public class WallMeshGenerator : MonoBehaviour
         float width = wallScaleSetting.x;
         float height = wallScaleSetting.y;
         float length = wallScaleSetting.z;
-        float topWidth = -(wallTopWidthSetting - 1) / 2;
+        float topWidth = wallTopWidthSetting;
 
 
         //3) Define the co-ordinates of each Corner of the cube 
@@ -30,10 +30,10 @@ public class WallMeshGenerator : MonoBehaviour
         c[2] = new Vector3(width * .5f, -height * .5f, -length * .5f);
         c[3] = new Vector3(-width * .5f, -height * .5f, -length * .5f);
 
-        c[4] = new Vector3((-width * .5f + topWidth), height * .5f, length * .5f);
-        c[5] = new Vector3((width * .5f - topWidth) , height * .5f, length * .5f);
-        c[6] = new Vector3((width * .5f - topWidth) , height * .5f, -length * .5f);
-        c[7] = new Vector3((-width * .5f + topWidth), height * .5f, -length * .5f);
+        c[4] = new Vector3((-width * .5f * topWidth), height * .5f, length * .5f);
+        c[5] = new Vector3((width * .5f * topWidth) , height * .5f, length * .5f);
+        c[6] = new Vector3((width * .5f * topWidth) , height * .5f, -length * .5f);
+        c[7] = new Vector3((-width * .5f * topWidth), height * .5f, -length * .5f);
 
 
         //4) Define the vertices that the cube is composed of:
@@ -115,15 +115,11 @@ public class WallMeshGenerator : MonoBehaviour
         mesh.RecalculateUVDistributionMetrics();
         return mesh;
     }
-    private static void SpawnWall(Material material, Transform parent, Vector3 direction, Vector3 pos, Vector3 wallScale, float wallTopWidth, CombineInstance[] combineInstances = null, int wallCount = 1)
+    private static Bounds SpawnWall(Material material, Transform parent, Vector3 direction, Vector3 pos, Vector3 wallScale, float wallTopWidth, CombineInstance[] combineInstances = null, int wallCount = 1)
     {
         GameObject wallGameObject = new GameObject();
         var combinedMesh = wallGameObject.AddComponent<MeshFilter>();
-        var mesh1 = combinedMesh.mesh;
-        if (combineInstances == null) combinedMesh.mesh = GenerateWallMesh(wallScale, wallTopWidth);
-        else combinedMesh.mesh.CombineMeshes(combineInstances, true, true);
-        
-        combinedMesh.mesh = mesh1;
+        combinedMesh.mesh.CombineMeshes(combineInstances, true, true);
         var meshRenderer = wallGameObject.AddComponent<MeshRenderer>();
         meshRenderer.material = material;
         wallGameObject.name = "wall " + _wallCountName;
@@ -131,23 +127,17 @@ public class WallMeshGenerator : MonoBehaviour
         wallGameObject.transform.position = pos;
         wallGameObject.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
         wallGameObject.transform.SetParent(parent, true);
+        return combinedMesh.mesh.bounds;
     }
     private static CombineInstance[] GetCombinedWall(Vector3 direction, Transform parent, Vector3 wallScale, float wallTopWidth)
     {
-        
-        Mesh mesh = new Mesh();
+	    Mesh mesh = new Mesh();
         mesh.Clear();
         var wallMeshInstance = GenerateWallMesh(wallScale, wallTopWidth);
         CombineInstance[] combineInstances = new CombineInstance[1];
-        
-	        combineInstances[0].mesh = wallMeshInstance;
-            combineInstances[0].transform = Matrix4x4.TRS(direction * 0, Quaternion.LookRotation(direction, Vector3.up), wallScale);
-            combineInstances[0].transform = parent.localToWorldMatrix.transpose;
-
-
-
-        
-        mesh.CombineMeshes(combineInstances, true, true);
+        combineInstances[0].mesh = wallMeshInstance;
+	    combineInstances[0].transform = Matrix4x4.TRS(direction * 0, Quaternion.LookRotation(Vector3.forward, Vector3.up), Vector3.one);
+	    mesh.CombineMeshes(combineInstances, true, true);
         return combineInstances;
     }
     
