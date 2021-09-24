@@ -102,21 +102,21 @@ public class ProceduralDungeonCreator : MonoBehaviour
 
 	private void CreateDungeon(int wallCount, Vector3 startingPos)
 	{
-		var firstAngle = Random.Range(-360, 360f);
+		var firstAngle = (int)Random.Range(0, 4) * 90f;
 		randomWallValues = new float[wallCount];
 		lastDirection = Quaternion.Euler(0, firstAngle, 0) * transform.forward;
 		lastWalllastPos = transform.position + startingPos;
 		for (int i = 0; i < randomWallValues.Length; i++)
 		{
-			var angle = Random.Range(-90, 90f);
+			var angle = (int)Random.Range(0, 4) * 90f;
 			Vector3 scale = _wallScale;
 			Vector3 direction = Quaternion.Euler(0, angle, 0) * lastDirection.normalized;
 			Vector3 pos = lastWalllastPos + lastDirection * lastScale.z / 2 + direction * scale.z / 2;
 			if (IntersectWithLibrary(pos, scale) || !IntersectWithDungeonBounds(pos, scale))
 			{
-				for (int j = 0; j < 37; j++)
+				for (int j = 0; j < 4; j++)
 				{
-					angle = 10f * j;
+					angle = 90f * j;
 					direction = Quaternion.Euler(0, angle, 0) * lastDirection.normalized;
 					pos = lastWalllastPos + lastDirection * lastScale.z / 2 + direction * scale.z / 2;
 					if (!IntersectWithLibrary(pos, scale) && IntersectWithDungeonBounds(pos, scale))

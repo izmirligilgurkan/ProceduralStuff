@@ -346,11 +346,11 @@ MonoBehaviour:
   _parent: {fileID: 1645409812}
   _wallScale: {x: 3, y: 5, z: 10}
   _wallTopWidth: 0.3
-  _seed: 69
+  _seed: 235123
   dungeonBounds: {fileID: 1645409813}
-  wallCount: 3
+  wallCount: 5
   randomPositionsForWallStart: 0
-  resolution: 20
+  resolution: 29
 --- !u!4 &1645409812
 Transform:
   m_ObjectHideFlags: 0
