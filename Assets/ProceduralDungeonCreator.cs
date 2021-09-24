@@ -19,6 +19,7 @@ public class ProceduralDungeonCreator : MonoBehaviour
 	[SerializeField] private int wallCount;
 	[SerializeField] private bool randomPositionsForWallStart;
 	[SerializeField][Range(1, 40)] private int resolution;
+	[SerializeField] private float randomAngle = 90f;
 	
 	
 	
@@ -37,9 +38,26 @@ public class ProceduralDungeonCreator : MonoBehaviour
 	    GenerateDungeonInCollider();
     }
 
+	private void GenerateBorderWalls(Bounds bounds)
+	{
+		var rightScale = new Vector3(_wallScale.z * 2f, _wallScale.y * 5f, bounds.size.x);
+		var forwardScale = new Vector3(_wallScale.z * 2f, _wallScale.y * 5f, bounds.size.z);
+
+		var wall1Pos = new Vector3(bounds.size.x / 2, transform.position.y, bounds.center.z);
+		var wall2Pos = new Vector3(-bounds.size.x / 2, transform.position.y, bounds.center.z);
+		var wall3Pos = new Vector3(bounds.center.x, transform.position.y, bounds.size.z / 2);
+		var wall4Pos = new Vector3(bounds.center.x, transform.position.y, -bounds.size.z / 2);
+
+		WallMeshGenerator.SpawnWalls(_material, _parent, transform.position + wall1Pos, transform.forward, forwardScale, _wallTopWidth);
+		WallMeshGenerator.SpawnWalls(_material, _parent, transform.position + wall2Pos, transform.forward, forwardScale, _wallTopWidth);
+		WallMeshGenerator.SpawnWalls(_material, _parent, transform.position + wall3Pos, transform.right, rightScale, _wallTopWidth);
+		WallMeshGenerator.SpawnWalls(_material, _parent, transform.position + wall4Pos, transform.right, rightScale, _wallTopWidth);
+
+	}
 	private void GenerateDungeonInCollider()
 	{
 		var bounds = dungeonBounds.bounds;
+		GenerateBorderWalls(bounds);
 		float gapX = (bounds.size.x) / (resolution + 1) ;
 		float gapZ = (bounds.size.z) / (resolution + 1);
 		iteration = resolution * resolution;
@@ -102,21 +120,21 @@ public class ProceduralDungeonCreator : MonoBehaviour
 
 	private void CreateDungeon(int wallCount, Vector3 startingPos)
 	{
-		var firstAngle = (int)Random.Range(0, 4) * 90f;
+		var firstAngle = (int)Random.Range(0, 4) * randomAngle;
 		randomWallValues = new float[wallCount];
 		lastDirection = Quaternion.Euler(0, firstAngle, 0) * transform.forward;
 		lastWalllastPos = transform.position + startingPos;
 		for (int i = 0; i < randomWallValues.Length; i++)
 		{
-			var angle = (int)Random.Range(0, 4) * 90f;
+			var angle = (int)Random.Range(0, 4) * randomAngle;
 			Vector3 scale = _wallScale;
 			Vector3 direction = Quaternion.Euler(0, angle, 0) * lastDirection.normalized;
 			Vector3 pos = lastWalllastPos + lastDirection * lastScale.z / 2 + direction * scale.z / 2;
 			if (IntersectWithLibrary(pos, scale) || !IntersectWithDungeonBounds(pos, scale))
 			{
-				for (int j = 0; j < 4; j++)
+				for (int j = 0; j < Mathf.FloorToInt(360 / randomAngle) + 1; j++)
 				{
-					angle = 90f * j;
+					angle = randomAngle * j;
 					direction = Quaternion.Euler(0, angle, 0) * lastDirection.normalized;
 					pos = lastWalllastPos + lastDirection * lastScale.z / 2 + direction * scale.z / 2;
 					if (!IntersectWithLibrary(pos, scale) && IntersectWithDungeonBounds(pos, scale))

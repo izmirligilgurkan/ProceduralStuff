@@ -349,8 +349,9 @@ MonoBehaviour:
   _seed: 235123
   dungeonBounds: {fileID: 1645409813}
   wallCount: 5
-  randomPositionsForWallStart: 0
-  resolution: 29
+  randomPositionsForWallStart: 1
+  resolution: 20
+  randomAngle: 90
 --- !u!4 &1645409812
 Transform:
   m_ObjectHideFlags: 0
